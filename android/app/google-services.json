@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "533273867064",
+    "firebase_url": "https://shopp-5ee57-default-rtdb.firebaseio.com",
+    "project_id": "shopp-5ee57",
+    "storage_bucket": "shopp-5ee57.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533273867064:android:b7ea8bb276f838d69c07cd",
+        "android_client_info": {
+          "package_name": "com.smartshop.smartshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCktnNuOijOciwjGUP1Xy3fa03FGcefCtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
