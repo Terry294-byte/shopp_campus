@@ -3,6 +3,7 @@ class UserModel {
   final String email;
   final String name;
   final String role;
+  final String? profileImageUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -11,6 +12,7 @@ class UserModel {
     required this.email,
     required this.name,
     this.role = 'user',
+    this.profileImageUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -21,6 +23,7 @@ class UserModel {
       'email': email,
       'name': name,
       'role': role,
+      'profileImageUrl': profileImageUrl,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -32,6 +35,7 @@ class UserModel {
       email: map['email'] ?? '',
       name: map['name'] ?? '',
       role: map['role'] ?? 'user',
+      profileImageUrl: map['profileImageUrl'],
       createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
       updatedAt: DateTime.parse(map['updatedAt'] ?? DateTime.now().toIso8601String()),
     );

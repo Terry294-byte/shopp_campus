@@ -13,6 +13,8 @@ import 'package:smartshop/screens/products_screen.dart';
 import 'package:smartshop/screens/add_product_screen.dart';
 import 'package:smartshop/screens/product_list_screen.dart';
 import 'package:smartshop/screens/admin_dashboard_screen.dart';
+import 'package:smartshop/screens/cart/cart_screen.dart';
+import 'package:smartshop/screens/cart/checkout_screen.dart';
 import 'services/auth_service.dart';
 import 'services/product_service.dart';
 
@@ -60,6 +62,8 @@ class MyApp extends StatelessWidget {
             '/add-product': (context) => const AddProductScreen(),
             '/product-list': (context) => const ProductListScreen(),
             '/admin-dashboard': (context) => const AdminDashboardScreen(),
+            '/cart': (context) => const CartScreen(),
+            '/checkout': (context) => const CheckoutScreen(),
           },
         );
       },

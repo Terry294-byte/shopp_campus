@@ -1,18 +1,25 @@
-# Admin Dashboard Implementation Plan
+# TODO: Update Products Screen
 
 ## Tasks
-- [x] Create AdminDashboardScreen with tabs for Add Products, View Users, View Products Sold
-- [x] Update main.dart to add '/admin-dashboard' route
-- [x] Update login_screen.dart to use AuthService and implement role-based redirection
-- [x] Implement View Users tab in AdminDashboardScreen
-- [x] Implement View Products Sold tab in AdminDashboardScreen
-- [x] Integrate Add Product functionality in AdminDashboardScreen
-- [x] Test role-based login redirection
-- [x] Test admin dashboard functionalities
+- [x] Modify `lib/screens/products_screen.dart` to fetch products from Firestore instead of sample data
+- [x] Add StreamBuilder for real-time product updates
+- [x] Implement user role checking to show/hide admin buttons
+- [x] Add loading and error states for better UX
+- [x] Improve UI responsiveness and spacing
+- [x] Change currency display from $ to KSH
+- [x] Improve image visibility and error handling
+- [x] Create checkout screen with order summary and payment form
+- [x] Add navigation from cart to checkout
+- [x] Update cart screen currency to KSH
+- [x] Add cart and checkout routes to main.dart
+- [x] Fix cart navigation from products screen (app bar icon and SnackBar action)
+- [x] Test the updated screen functionality
+- [x] Verify admin/non-admin button visibility
+- [x] Ensure navigation to add-product and product-list works correctly
 
-## Completed
-- [x] Analyze existing codebase
-- [x] Create implementation plan
-- [x] Get user approval for plan
-- [x] Implement admin dashboard with role-based login redirection
-- [x] Test all functionalities
+## Status
+- [x] Plan approved by user
+- [x] Implementation completed successfully
+- [x] Additional improvements applied based on user feedback
+- [x] Checkout functionality implemented
+et

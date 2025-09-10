@@ -1,11 +1,115 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../services/auth_service.dart';
 import '../screens/theme_provider.dart';
 import '../constants/app_colors.dart';
+import '../models/user_model.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  UserModel? _currentUser;
+  File? _selectedImage;
+  bool _isUploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final user = await authService.getCurrentUserData();
+    setState(() {
+      _currentUser = user;
+    });
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try {
+      final imageFile = await authService.pickImage(source);
+      if (imageFile != null) {
+        setState(() {
+          _selectedImage = File(imageFile.path);
+        });
+        await _uploadProfileImage();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> _uploadProfileImage() async {
+    if (_selectedImage == null || _currentUser == null) return;
+
+    setState(() {
+      _isUploading = true;
+    });
+
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try {
+      final imageUrl = await authService.uploadProfileImage(_currentUser!.uid, _selectedImage!);
+      if (imageUrl != null) {
+        await authService.updateProfileImageUrl(_currentUser!.uid, imageUrl);
+        await _loadCurrentUser(); // Refresh user data
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile picture updated successfully!')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading image: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isUploading = false;
+        _selectedImage = null;
+      });
+    }
+  }
+
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose Image Source'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Future<void> _handleLogout(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
@@ -63,15 +167,38 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: NetworkImage(
-                'https://cdn.pixabay.com/photo/2018/11/13/22/01/avatar-3814081_640.png',
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: _currentUser?.profileImageUrl != null
+                      ? NetworkImage(_currentUser!.profileImageUrl!)
+                      : const NetworkImage(
+                          'https://cdn.pixabay.com/photo/2018/11/13/22/01/avatar-3814081_640.png',
+                        ),
+                ),
+                if (_isUploading)
+                  const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: AppColors.primaryRed,
+                    child: IconButton(
+                      icon: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+                      onPressed: _isUploading ? null : _showImageSourceDialog,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Text(
-              'shiroterry168@gmail.com',
+              _currentUser?.email ?? 'Loading...',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

@@ -99,7 +99,7 @@ class CartScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '\$${cartProvider.totalAmount.toStringAsFixed(2)}',
+                            'KSH ${cartProvider.totalAmount.toStringAsFixed(2)}',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class CartScreen extends StatelessWidget {
                           onPressed: cartItems.isEmpty
                               ? null
                               : () {
-                                  // Navigate to checkout
+                                  Navigator.pushNamed(context, '/checkout');
                                 },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
