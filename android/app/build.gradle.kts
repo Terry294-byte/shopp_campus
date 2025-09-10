@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.smartshop.smartshop"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -20,8 +20,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.smartshop"
-        minSdk = flutter.minSdkVersion
+        applicationId = "com.smartshop.smartshop"
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

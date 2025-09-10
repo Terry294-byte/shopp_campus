@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/.kotlin/
+/android/app/build/
+/android/build/
+flutter
+node_modules/
+smartshop/
