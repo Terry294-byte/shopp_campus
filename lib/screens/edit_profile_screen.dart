@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../services/auth_service.dart';
 import '../constants/app_colors.dart';
 import '../models/user_model.dart';
@@ -15,8 +18,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  XFile? _selectedImage;
   bool _isLoading = false;
   UserModel? _currentUser;
+  bool _isRemovingImage = false;
 
   @override
   void initState() {
@@ -43,6 +48,56 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try {
+      final imageFile = await authService.pickImage(ImageSource.gallery);
+      if (imageFile != null) {
+        setState(() {
+          _selectedImage = imageFile;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> _removeProfileImage() async {
+    if (_currentUser == null) return;
+
+    setState(() {
+      _isRemovingImage = true;
+    });
+
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try {
+      // Delete profile image from Cloudinary
+      final success = await authService.deleteProfileImage(_currentUser!.uid);
+      if (success) {
+        // Remove profileImageUrl from Firestore
+        await authService.updateProfileImageUrl(_currentUser!.uid, '');
+        await _loadCurrentUser();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile image removed successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to remove profile image')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error removing image: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isRemovingImage = false;
+      });
+    }
+  }
+
   Future<void> _updateProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -53,12 +108,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final authService = Provider.of<AuthService>(context, listen: false);
 
     try {
+      // Upload new profile image if selected
+      String? imageUrl;
+      if (_selectedImage != null) {
+        imageUrl = await authService.uploadProfileImage(_currentUser!.uid, _selectedImage!);
+      }
+
       // Update user data in Firestore
       await authService.updateUserProfile(
         _currentUser!.uid,
         _nameController.text.trim(),
         _emailController.text.trim(),
       );
+
+      // Update profile image URL if new image uploaded
+      if (imageUrl != null) {
+        await authService.updateProfileImageUrl(_currentUser!.uid, imageUrl);
+      }
 
       if (!mounted) return;
 
@@ -77,6 +143,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          _selectedImage = null;
         });
       }
     }
@@ -100,6 +167,57 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    const SizedBox(height: 20),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                        backgroundImage: _selectedImage != null
+                            ? (kIsWeb
+                                ? NetworkImage(_selectedImage!.path)
+                                : Image.file(
+                                    File(_selectedImage!.path),
+                                    fit: BoxFit.cover,
+                                  ).image)
+                            : (_currentUser?.profileImageUrl != null && _currentUser!.profileImageUrl!.isNotEmpty)
+                                ? NetworkImage(_currentUser!.profileImageUrl!)
+                                : const NetworkImage(
+                                    'https://cdn.pixabay.com/photo/2018/11/13/22/01/avatar-3814081_640.png',
+                                  ),
+                        ),
+                        if (_isRemovingImage)
+                          const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: AppColors.primaryRed,
+                                child: IconButton(
+                                  icon: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+                                  onPressed: _isLoading || _isRemovingImage ? null : _pickImage,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              if ((_currentUser?.profileImageUrl != null && _currentUser!.profileImageUrl!.isNotEmpty) || _selectedImage != null)
+                                CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Colors.grey[700],
+                                  child: IconButton(
+                                    icon: const Icon(Icons.delete, size: 18, color: Colors.white),
+                                    onPressed: _isLoading || _isRemovingImage ? null : _removeProfileImage,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _nameController,

@@ -220,6 +220,16 @@ class AuthService {
     }
   }
 
+  // Delete profile image from Cloudinary
+  Future<bool> deleteProfileImage(String uid) async {
+    try {
+      return await CloudinaryService.deleteProfileImage(uid);
+    } catch (e) {
+      print('Error deleting profile image: $e');
+      return false;
+    }
+  }
+
   // Update user profile
   Future<void> updateUserProfile(String uid, String name, String email) async {
     try {
