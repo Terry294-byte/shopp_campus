@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:crypto/crypto.dart';
 
 class CloudinaryService {
   // Cloudinary configuration - Replace these with your actual values
@@ -11,7 +14,7 @@ class CloudinaryService {
   static const String apiSecret = 'your_api_secret'; // Replace with your Cloudinary API secret
 
   // Upload profile image to Cloudinary using HTTP
-  static Future<String?> uploadProfileImage(String uid, File imageFile) async {
+  static Future<String?> uploadProfileImage(String uid, XFile imageFile) async {
     try {
       final String uploadUrl = 'https://api.cloudinary.com/v1_1/$cloudName/image/upload';
 
@@ -24,13 +27,19 @@ class CloudinaryService {
       // Add public ID for the image
       request.fields['public_id'] = 'profile_images/$uid';
 
-      // Add folder
-      request.fields['folder'] = 'profile_images';
-
-      // Add the image file
-      request.files.add(
-        await http.MultipartFile.fromPath('file', imageFile.path),
-      );
+      // Add the image file - handle both mobile and web
+      if (kIsWeb) {
+        // For web, read as bytes
+        final bytes = await imageFile.readAsBytes();
+        request.files.add(
+          http.MultipartFile.fromBytes('file', bytes, filename: imageFile.name),
+        );
+      } else {
+        // For mobile, use file path
+        request.files.add(
+          await http.MultipartFile.fromPath('file', imageFile.path),
+        );
+      }
 
       // Send the request
       var response = await request.send();
@@ -56,18 +65,32 @@ class CloudinaryService {
       final String publicId = 'profile_images/$uid';
       final String deleteUrl = 'https://api.cloudinary.com/v1_1/$cloudName/image/destroy';
 
-      // Create the authentication signature (simplified for upload preset)
-      // For production, you should generate a proper signature using API secret
+      // Prepare timestamp and signature for authentication
+      final int timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final String signatureString = 'public_id=$publicId&timestamp=$timestamp$apiSecret';
+      final String signature = sha1.convert(utf8.encode(signatureString)).toString();
+
+      // Prepare request body
+      final Map<String, String> body = {
+        'public_id': publicId,
+        'timestamp': timestamp.toString(),
+        'api_key': apiKey,
+        'signature': signature,
+      };
+
       var response = await http.post(
         Uri.parse(deleteUrl),
-        body: {
-          'public_id': publicId,
-          'upload_preset': uploadPreset,
-        },
+        body: body,
       );
 
       if (response.statusCode == 200) {
-        return true;
+        final responseData = json.decode(response.body);
+        if (responseData['result'] == 'ok') {
+          return true;
+        } else {
+          print('Delete failed: ${response.body}');
+          return false;
+        }
       } else {
         print('Delete failed: ${response.body}');
         return false;

@@ -253,7 +253,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-                      );
+                      ).then((_) {
+                        // Refresh user data when returning from edit profile screen
+                        _loadCurrentUser();
+                      });
                     },
                   ),
                   const Divider(height: 1),

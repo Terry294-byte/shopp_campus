@@ -112,6 +112,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       String? imageUrl;
       if (_selectedImage != null) {
         imageUrl = await authService.uploadProfileImage(_currentUser!.uid, _selectedImage!);
+        if (imageUrl == null) {
+          throw Exception('Failed to upload profile image. Please try again.');
+        }
       }
 
       // Update user data in Firestore

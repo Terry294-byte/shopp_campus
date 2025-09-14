@@ -200,7 +200,7 @@ class AuthService {
   // Upload profile image to Cloudinary
   Future<String?> uploadProfileImage(String uid, XFile imageFile) async {
     try {
-      return await CloudinaryService.uploadProfileImage(uid, File(imageFile.path));
+      return await CloudinaryService.uploadProfileImage(uid, imageFile);
     } catch (e) {
       print('Error uploading profile image to Cloudinary: $e');
       throw e;
@@ -216,7 +216,6 @@ class AuthService {
       });
     } catch (e) {
       print('Error updating profile image URL: $e');
-      throw e;
     }
   }
 
