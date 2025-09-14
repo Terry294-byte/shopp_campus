@@ -5,6 +5,9 @@ import '../services/auth_service.dart';
 import '../screens/theme_provider.dart';
 import '../constants/app_colors.dart';
 import '../models/user_model.dart';
+import 'edit_profile_screen.dart';
+import 'change_password_screen.dart';
+import 'notifications_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -247,7 +250,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
-                      // Navigate to edit profile
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                      );
                     },
                   ),
                   const Divider(height: 1),
@@ -261,7 +267,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
-                      // Navigate to change password
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+                      );
                     },
                   ),
                   const Divider(height: 1),
@@ -275,7 +284,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
-                      // Navigate to notifications
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+                      );
                     },
                   ),
                 ],
