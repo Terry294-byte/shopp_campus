@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/theme_provider.dart';
-
+import '../screens/search_screen.dart';
+import '../screens/profile_screen.dart';
 import '../widgets/title_text.dart';
 import '../widgets/sidebar_header.dart';
+import '../constants/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,21 +16,223 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Widget _getHomeContent(bool isDark) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Home Tab',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Welcome Section
+            Card(
+              color: isDark ? AppColors.darkGrey.withOpacity(0.8) : AppColors.white,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TitleTextWidget(
+                      label: "Welcome to SmartShop!",
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : AppColors.black,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Discover amazing products and shop with ease.",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : AppColors.lightGrey,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/products');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryRed,
+                        foregroundColor: AppColors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Start Shopping",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Banner Section
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: const DecorationImage(
+                  image: AssetImage('assets/images/banners/banner1.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.black.withOpacity(0.6),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Special Offers",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        "Up to 50% off on selected items",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Quick Actions Section
+            TitleTextWidget(
+              label: "Quick Actions",
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : AppColors.black,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildQuickActionCard(
+                    isDark: isDark,
+                    icon: Icons.shopping_bag,
+                    title: "Products",
+                    onTap: () => Navigator.pushNamed(context, '/products'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildQuickActionCard(
+                    isDark: isDark,
+                    icon: Icons.favorite_border,
+                    title: "Wishlist",
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Wishlist feature coming soon!'),
+                          backgroundColor: AppColors.primaryRed,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildQuickActionCard(
+                    isDark: isDark,
+                    icon: Icons.history,
+                    title: "Recent",
+                    onTap: () {
+                      // Navigate to Search screen (placeholder for recent searches/viewed items)
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => SearchScreen()),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildQuickActionCard(
+                    isDark: isDark,
+                    icon: Icons.settings,
+                    title: "Settings",
+                    onTap: () {
+                      // Navigate to Profile screen (contains settings)
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => ProfileScreen()),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionCard({
+    required bool isDark,
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      color: isDark ? AppColors.darkGrey.withOpacity(0.8) : AppColors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                size: 32,
+                color: AppColors.primaryRed,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : AppColors.black,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          Image.asset(
-            'assets/images/bag/bag_wish.png',
-            height: 100,
-            width: 100,
-          ),
-        ],
+        ),
       ),
     );
   }
