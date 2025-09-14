@@ -1,25 +1,17 @@
-# TODO: Update Products Screen
+# Cloudinary Integration for Profile Images
 
 ## Tasks
-- [x] Modify `lib/screens/products_screen.dart` to fetch products from Firestore instead of sample data
-- [x] Add StreamBuilder for real-time product updates
-- [x] Implement user role checking to show/hide admin buttons
-- [x] Add loading and error states for better UX
-- [x] Improve UI responsiveness and spacing
-- [x] Change currency display from $ to KSH
-- [x] Improve image visibility and error handling
-- [x] Create checkout screen with order summary and payment form
-- [x] Add navigation from cart to checkout
-- [x] Update cart screen currency to KSH
-- [x] Add cart and checkout routes to main.dart
-- [x] Fix cart navigation from products screen (app bar icon and SnackBar action)
-- [x] Test the updated screen functionality
-- [x] Verify admin/non-admin button visibility
-- [x] Ensure navigation to add-product and product-list works correctly
+- [x] Add cloudinary_public dependency to pubspec.yaml
+- [x] Create lib/services/cloudinary_service.dart
+- [x] Update lib/services/auth_service.dart to use CloudinaryService
+- [x] Run flutter pub get to install dependencies
+- [x] Test profile image upload functionality
 
-## Status
-- [x] Plan approved by user
-- [x] Implementation completed successfully
-- [x] Additional improvements applied based on user feedback
-- [x] Checkout functionality implemented
-et
+## Notes
+- Replaced Firebase Storage with Cloudinary for profile image uploads
+- Keep Firestore integration for storing image URLs
+- Maintain existing UI flow in ProfileScreen
+- **Important**: Update Cloudinary credentials in `lib/services/cloudinary_service.dart`:
+  - Replace `'your_cloud_name'` with your actual Cloudinary cloud name
+  - Replace `'your_upload_preset'` with your upload preset name
+  - Replace `'your_api_key'` and `'your_api_secret'` with your API credentials

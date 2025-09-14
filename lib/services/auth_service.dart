@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:io';
 import '../models/user_model.dart';
+import 'cloudinary_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -196,21 +197,12 @@ class AuthService {
     }
   }
 
-  // Upload profile image to Firebase Storage
+  // Upload profile image to Cloudinary
   Future<String?> uploadProfileImage(String uid, File imageFile) async {
     try {
-      final firebase_storage.Reference storageRef = firebase_storage.FirebaseStorage.instance
-          .ref()
-          .child('profile_images')
-          .child('$uid.jpg');
-
-      final firebase_storage.UploadTask uploadTask = storageRef.putFile(imageFile);
-      final firebase_storage.TaskSnapshot snapshot = await uploadTask;
-
-      final String downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
+      return await CloudinaryService.uploadProfileImage(uid, imageFile);
     } catch (e) {
-      print('Error uploading profile image: $e');
+      print('Error uploading profile image to Cloudinary: $e');
       throw e;
     }
   }
