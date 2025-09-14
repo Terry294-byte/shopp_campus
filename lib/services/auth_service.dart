@@ -198,9 +198,9 @@ class AuthService {
   }
 
   // Upload profile image to Cloudinary
-  Future<String?> uploadProfileImage(String uid, File imageFile) async {
+  Future<String?> uploadProfileImage(String uid, XFile imageFile) async {
     try {
-      return await CloudinaryService.uploadProfileImage(uid, imageFile);
+      return await CloudinaryService.uploadProfileImage(uid, File(imageFile.path));
     } catch (e) {
       print('Error uploading profile image to Cloudinary: $e');
       throw e;
@@ -216,6 +216,20 @@ class AuthService {
       });
     } catch (e) {
       print('Error updating profile image URL: $e');
+      throw e;
+    }
+  }
+
+  // Update user profile
+  Future<void> updateUserProfile(String uid, String name, String email) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        'name': name,
+        'email': email,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error updating user profile: $e');
       throw e;
     }
   }

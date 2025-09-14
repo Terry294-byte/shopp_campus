@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 class CloudinaryService {
   // Cloudinary configuration - Replace these with your actual values
   // You can get these from your Cloudinary dashboard
-  static const String cloudName = 'your_cloud_name'; // Replace with your Cloudinary cloud name
-  static const String uploadPreset = 'your_upload_preset'; // Replace with your upload preset
+  static const String cloudName = 'dcfcpbcoo'; // Replace with your Cloudinary cloud name
+  static const String uploadPreset = 'profile_uploads'; // Replace with your upload preset
   static const String apiKey = 'your_api_key'; // Replace with your Cloudinary API key
   static const String apiSecret = 'your_api_secret'; // Replace with your Cloudinary API secret
 

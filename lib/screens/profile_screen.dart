@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import '../services/auth_service.dart';
 import '../screens/theme_provider.dart';
 import '../constants/app_colors.dart';
@@ -16,7 +15,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   UserModel? _currentUser;
-  File? _selectedImage;
+  XFile? _selectedImage;
   bool _isUploading = false;
 
   @override
@@ -39,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final imageFile = await authService.pickImage(source);
       if (imageFile != null) {
         setState(() {
-          _selectedImage = File(imageFile.path);
+          _selectedImage = imageFile;
         });
         await _uploadProfileImage();
       }
