@@ -62,7 +62,7 @@ class CartItemWidget extends StatelessWidget {
                   
                   // Price
                   Text(
-                    '\$${cartItem.price.toStringAsFixed(2)}',
+                    'KSH ${cartItem.price.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.blue,
