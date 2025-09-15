@@ -6,6 +6,8 @@ import '../screens/profile_screen.dart';
 import '../widgets/title_text.dart';
 import '../widgets/sidebar_header.dart';
 import '../constants/app_colors.dart';
+import '../providers/wishlist_provider.dart';
+import '../models/product_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +18,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Widget _getHomeContent(bool isDark) {
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
+    final wishlistItems = wishlistProvider.wishlistItems;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -123,6 +128,68 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 24),
 
+            // Wishlist Preview Card Section
+            TitleTextWidget(
+              label: "Your Wishlist",
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : AppColors.black,
+            ),
+            const SizedBox(height: 12),
+            wishlistItems.isEmpty
+                ? Text(
+                    "Your wishlist is empty. Add products you love!",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isDark ? Colors.white70 : AppColors.lightGrey,
+                    ),
+                  )
+                : SizedBox(
+                    height: 150,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: wishlistItems.length > 3 ? 3 : wishlistItems.length,
+                      itemBuilder: (context, index) {
+                        final product = wishlistItems[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/wishlist');
+                          },
+                          child: Container(
+                            width: 120,
+                            margin: const EdgeInsets.only(right: 12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: isDark ? AppColors.darkGrey.withOpacity(0.8) : AppColors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: product.imageUrl.isNotEmpty
+                                  ? Image.network(
+                                      product.imageUrl,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: Colors.grey[200],
+                                      child: const Center(
+                                        child: Icon(Icons.image_not_supported, size: 48),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+            const SizedBox(height: 24),
+
             // Quick Actions Section
             TitleTextWidget(
               label: "Quick Actions",
@@ -147,14 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     isDark: isDark,
                     icon: Icons.favorite_border,
                     title: "Wishlist",
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Wishlist feature coming soon!'),
-                          backgroundColor: AppColors.primaryRed,
-                        ),
-                      );
-                    },
+                    onTap: () => Navigator.pushNamed(context, '/wishlist'),
                   ),
                 ),
               ],
@@ -312,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text('Wishlist', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
                 onTap: () {
                   Navigator.pop(context);
-                  // TODO: Navigate to Wishlist screen
+                  Navigator.pushNamed(context, '/wishlist');
                 },
               ),
               ListTile(

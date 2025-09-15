@@ -49,12 +49,12 @@ class WishlistScreen extends StatelessWidget {
         ],
       ),
       body: wishlistItems.isEmpty
-          ? _buildEmptyWishlist()
+          ? _buildEmptyWishlist(context)
           : _buildWishlistGrid(wishlistItems, wishlistProvider),
     );
   }
 
-  Widget _buildEmptyWishlist() {
+  Widget _buildEmptyWishlist(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

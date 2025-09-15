@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/cart_provider.dart';
+import '../providers/wishlist_provider.dart';
 import '../models/product_model.dart';
 import '../services/product_service.dart';
 import '../services/auth_service.dart';
@@ -164,6 +165,8 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
+    final isInWishlist = wishlistProvider.isInWishlist(product.id);
 
     return Card(
       elevation: 2,
@@ -173,64 +176,99 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Product Image
+          // Product Image with Wishlist Button
           Container(
             height: 150,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               color: Colors.grey[100],
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: product.imageUrl.isNotEmpty
-                  ? Image.network(
-                      product.imageUrl,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[200],
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.broken_image, color: Colors.grey[400], size: 48),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Image not available',
-                              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  child: product.imageUrl.isNotEmpty
+                      ? Image.network(
+                          product.imageUrl,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey[200],
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.broken_image, color: Colors.grey[400], size: 48),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Image not available',
+                                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: Colors.grey[100],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: Colors.grey[200],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image_not_supported, color: Colors.grey[400], size: 48),
+                              const SizedBox(height: 8),
+                              Text(
+                                'No image',
+                                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          color: Colors.grey[100],
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                  : null,
-                              strokeWidth: 2,
-                            ),
+                ),
+                // Wishlist Button
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: IconButton(
+                    icon: Icon(
+                      isInWishlist ? Icons.favorite : Icons.favorite_border,
+                      color: isInWishlist ? Colors.red : Colors.white,
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      wishlistProvider.toggleItem(product);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            isInWishlist
+                                ? '${product.title} removed from wishlist'
+                                : '${product.title} added to wishlist',
                           ),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: Colors.grey[200],
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.image_not_supported, color: Colors.grey[400], size: 48),
-                          const SizedBox(height: 8),
-                          Text(
-                            'No image',
-                            style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                          ),
-                        ],
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.black.withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
+                  ),
+                ),
+              ],
             ),
           ),
           

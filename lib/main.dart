@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:smartshop/firebase_options.dart';
 import 'package:smartshop/screens/auth/login_screen.dart';
 import 'package:smartshop/providers/cart_provider.dart';
+import 'package:smartshop/providers/wishlist_provider.dart';
 import 'package:smartshop/screens/roots_screen.dart';
 import 'screens/theme_provider.dart';
 import 'constants/theme_data.dart';
@@ -30,6 +31,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => WishlistProvider()),
         Provider(create: (_) => AuthService()),
         Provider(create: (_) => ProductService()),
       ],
