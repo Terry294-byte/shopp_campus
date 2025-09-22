@@ -18,6 +18,7 @@ import 'package:smartshop/screens/cart/cart_screen.dart';
 import 'package:smartshop/screens/cart/checkout_screen.dart';
 import 'services/auth_service.dart';
 import 'services/product_service.dart';
+import 'services/toast_service.dart';
 
 
 void main() async {
@@ -34,6 +35,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => WishlistProvider()),
         Provider(create: (_) => AuthService()),
         Provider(create: (_) => ProductService()),
+        Provider(create: (_) => ToastService()),
       ],
       child: const MyApp(),
     ),

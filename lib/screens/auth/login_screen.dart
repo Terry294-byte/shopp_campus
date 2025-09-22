@@ -4,6 +4,7 @@ import 'register_screen.dart';
 import 'forgot_password_screen.dart';
 import '../../services/auth_service.dart';
 import '../../models/user_model.dart';
+import '../../services/toast_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -45,14 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushReplacementNamed(context, '/home');
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login failed. Please try again.')),
-          );
+          ToastService.showError('Login failed. Please try again.');
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        ToastService.showError('Error: ${e.toString()}');
       } finally {
         setState(() => _isLoading = false);
       }
@@ -74,14 +71,10 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacementNamed(context, '/home');
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Google sign-in cancelled')),
-        );
+        ToastService.showWarning('Google sign-in cancelled');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      ToastService.showError('Error: ${e.toString()}');
     } finally {
       setState(() => _isLoading = false);
     }
