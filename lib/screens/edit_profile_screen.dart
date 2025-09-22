@@ -84,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to remove profile image')),
+          const SnackBar(content: Text('Failed to remove profile image. Check your Cloudinary API secret.')),
         );
       }
     } catch (e) {
@@ -242,22 +242,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        labelText: 'Email',
+                        labelText: 'Email (read-only)',
                         prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        hintText: 'Email cannot be changed here',
                       ),
+                      readOnly: true,
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 40),
                     SizedBox(

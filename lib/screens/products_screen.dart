@@ -54,6 +54,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/home');
+          },
+        ),
         title: const Text('Products'),
         actions: [
           if (isAdmin)

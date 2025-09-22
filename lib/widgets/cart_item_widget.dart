@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:smartshop/providers/cart_provider.dart';
 
 class CartItemWidget extends StatelessWidget {
@@ -28,12 +29,12 @@ class CartItemWidget extends StatelessWidget {
             // Product Image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                cartItem.imageUrl,
+              child: FancyShimmerImage(
+                imageUrl: cartItem.imageUrl,
                 width: 80,
                 height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
+                boxFit: BoxFit.cover,
+                errorWidget: Container(
                   width: 80,
                   height: 80,
                   color: Colors.grey[200],

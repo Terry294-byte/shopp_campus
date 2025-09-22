@@ -49,3 +49,6 @@ app.*.map.json
 flutter
 node_modules/
 smartshop/
+
+# Environment variables
+mpesa-backend/.env

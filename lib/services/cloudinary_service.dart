@@ -10,8 +10,8 @@ class CloudinaryService {
   // You can get these from your Cloudinary dashboard
   static const String cloudName = 'dcfcpbcoo'; // Replace with your Cloudinary cloud name
   static const String uploadPreset = 'profile_uploads'; // Replace with your upload preset
-  static const String apiKey = 'your_api_key'; // Replace with your Cloudinary API key
-  static const String apiSecret = 'your_api_secret'; // Replace with your Cloudinary API secret
+  static const String apiKey = '478595114636551'; // Replace with your Cloudinary API key
+  static const String apiSecret = 'YERu7Sp7TRWJjliNIi3kHkcPP-I'; // Please replace with your Cloudinary API secret
 
   // Upload profile image to Cloudinary using HTTP
   static Future<String?> uploadProfileImage(String uid, XFile imageFile) async {
