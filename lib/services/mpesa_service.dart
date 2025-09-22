@@ -21,9 +21,9 @@ class MpesaService {
       return "http://localhost:5000";
     }
 
-    // For physical devices - use your computer's IP address
-    // Replace 192.168.1.100 with your actual computer IP
-    return "http://192.168.1.100:5000";
+    // For physical devices - use ngrok URL when available
+    // Replace with your ngrok URL when using ngrok
+    return "https://7a217d05a943.ngrok-free.app";
   }
 
   Future<Map<String, dynamic>> initiateStkPush(String phoneNumber, double amount) async {
@@ -32,6 +32,7 @@ class MpesaService {
       print('📱 Phone: $phoneNumber');
       print('💰 Amount: $amount');
       print('🌐 Backend URL: $baseUrl');
+      print('🔗 Full STK Push URL: $baseUrl/stkpush');
 
       final response = await http.post(
         Uri.parse("$baseUrl/stkpush"),
