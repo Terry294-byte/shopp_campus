@@ -40,6 +40,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Notifications'),
         backgroundColor: isDark ? AppColors.darkGrey : AppColors.primaryRed,
@@ -61,222 +62,238 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          // Notifications Tab
-          Consumer<NotificationProvider>(
-            builder: (context, provider, child) {
-              if (provider.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              physics: const BouncingScrollPhysics(),
+              children: [
+                // Notifications Tab
+                Consumer<NotificationProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-              if (provider.notifications.isEmpty) {
-                return _buildEmptyNotifications();
-              }
+                    if (provider.notifications.isEmpty) {
+                      return _buildEmptyNotifications();
+                    }
 
-              return _buildNotificationsList(provider);
-            },
-          ),
-
-          // Settings Tab
-          Consumer<NotificationProvider>(
-            builder: (context, provider, child) {
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    Text(
-                      'Notification Settings',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? AppColors.white : AppColors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Choose what notifications you want to receive',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-
-                    // Push Notifications
-                    Card(
-                      elevation: 2,
-                      child: SwitchListTile(
-                        title: Text(
-                          'Push Notifications',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white : AppColors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Receive push notifications on your device',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
-                          ),
-                        ),
-                        value: provider.settings['push_notifications'] ?? true,
-                        onChanged: (value) {
-                          provider.updateSetting('push_notifications', value);
-                        },
-                        activeColor: AppColors.primaryRed,
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Email Notifications
-                    Card(
-                      elevation: 2,
-                      child: SwitchListTile(
-                        title: Text(
-                          'Email Notifications',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white : AppColors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Receive notifications via email',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
-                          ),
-                        ),
-                        value: provider.settings['email_notifications'] ?? true,
-                        onChanged: (value) {
-                          provider.updateSetting('email_notifications', value);
-                        },
-                        activeColor: AppColors.primaryRed,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-                    Text(
-                      'Specific Notifications',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? AppColors.white : AppColors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Order Updates
-                    Card(
-                      elevation: 2,
-                      child: SwitchListTile(
-                        title: Text(
-                          'Order Updates',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white : AppColors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Get notified about your order status',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
-                          ),
-                        ),
-                        value: provider.settings['order_updates'] ?? true,
-                        onChanged: (value) {
-                          provider.updateSetting('order_updates', value);
-                        },
-                        activeColor: AppColors.primaryRed,
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Promotional Offers
-                    Card(
-                      elevation: 2,
-                      child: SwitchListTile(
-                        title: Text(
-                          'Promotional Offers',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white : AppColors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Receive offers and discounts',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
-                          ),
-                        ),
-                        value: provider.settings['promotional_offers'] ?? false,
-                        onChanged: (value) {
-                          provider.updateSetting('promotional_offers', value);
-                        },
-                        activeColor: AppColors.primaryRed,
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // New Products
-                    Card(
-                      elevation: 2,
-                      child: SwitchListTile(
-                        title: Text(
-                          'New Products',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white : AppColors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Get notified when new products are added',
-                          style: TextStyle(
-                            color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
-                          ),
-                        ),
-                        value: provider.settings['new_products'] ?? true,
-                        onChanged: (value) {
-                          provider.updateSetting('new_products', value);
-                        },
-                        activeColor: AppColors.primaryRed,
-                      ),
-                    ),
-
-                    const SizedBox(height: 40),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Notification settings saved!')),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryRed,
-                          foregroundColor: AppColors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Save Settings',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
+                    return _buildNotificationsList(provider);
+                  },
                 ),
-              );
-            },
+
+                // Settings Tab
+                Consumer<NotificationProvider>(
+                  builder: (context, provider, child) {
+                    return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text(
+                            'Notification Settings',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? AppColors.white : AppColors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Choose what notifications you want to receive',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Push Notifications
+                          Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: SwitchListTile(
+                              title: Text(
+                                'Push Notifications',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white : AppColors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Receive push notifications on your device',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
+                                ),
+                              ),
+                              value: provider.settings['push_notifications'] ?? true,
+                              onChanged: (value) {
+                                provider.updateSetting('push_notifications', value);
+                              },
+                              activeColor: AppColors.primaryRed,
+                            ),
+                          ),
+
+                          // Email Notifications
+                          Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            child: SwitchListTile(
+                              title: Text(
+                                'Email Notifications',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white : AppColors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Receive notifications via email',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
+                                ),
+                              ),
+                              value: provider.settings['email_notifications'] ?? true,
+                              onChanged: (value) {
+                                provider.updateSetting('email_notifications', value);
+                              },
+                              activeColor: AppColors.primaryRed,
+                            ),
+                          ),
+
+                          Text(
+                            'Specific Notifications',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? AppColors.white : AppColors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Order Updates
+                          Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: SwitchListTile(
+                              title: Text(
+                                'Order Updates',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white : AppColors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Get notified about your order status',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
+                                ),
+                              ),
+                              value: provider.settings['order_updates'] ?? true,
+                              onChanged: (value) {
+                                provider.updateSetting('order_updates', value);
+                              },
+                              activeColor: AppColors.primaryRed,
+                            ),
+                          ),
+
+                          // Promotional Offers
+                          Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: SwitchListTile(
+                              title: Text(
+                                'Promotional Offers',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white : AppColors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Receive offers and discounts',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
+                                ),
+                              ),
+                              value: provider.settings['promotional_offers'] ?? false,
+                              onChanged: (value) {
+                                provider.updateSetting('promotional_offers', value);
+                              },
+                              activeColor: AppColors.primaryRed,
+                            ),
+                          ),
+
+                          // New Products
+                          Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 20),
+                            child: SwitchListTile(
+                              title: Text(
+                                'New Products',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white : AppColors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Get notified when new products are added',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.white.withOpacity(0.7) : AppColors.black.withOpacity(0.7),
+                                ),
+                              ),
+                              value: provider.settings['new_products'] ?? true,
+                              onChanged: (value) {
+                                provider.updateSetting('new_products', value);
+                              },
+                              activeColor: AppColors.primaryRed,
+                            ),
+                          ),
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                // Get current settings from provider
+                                final currentSettings = provider.settings;
+
+                                // Save settings using provider method
+                                await provider.updateSettings(currentSettings);
+
+                                // Show success message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Notification settings saved successfully!'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryRed,
+                                foregroundColor: AppColors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                'Save Settings',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

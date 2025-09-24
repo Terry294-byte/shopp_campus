@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../providers/cart_provider.dart';
+import '../../providers/notification_provider.dart';
 import '../../services/auth_service.dart';
 import '../../services/mpesa_service.dart';
 
@@ -218,6 +219,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 actions: [
                   TextButton(
                     onPressed: () {
+                      // Create order notification
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      final orderId = payment['order'] != null ? payment['order']['id'] : 'ORD_${DateTime.now().millisecondsSinceEpoch}';
+                      final userName = _nameController.text;
+
+                      notificationProvider.createOrderNotification(
+                        orderId: orderId,
+                        status: 'confirmed',
+                        userName: userName,
+                      );
+
                       Provider.of<CartProvider>(context, listen: false).clearCart();
                       Navigator.of(ctx).pop();
                       Navigator.of(context).pushNamedAndRemoveUntil('/products', (route) => false);

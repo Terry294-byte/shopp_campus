@@ -46,6 +46,10 @@ app.*.map.json
 /android/.kotlin/
 /android/app/build/
 /android/build/
+
+# Keystore files
+*.jks
+*.keystore
 flutter
 node_modules/
 smartshop/

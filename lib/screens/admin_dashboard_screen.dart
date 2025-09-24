@@ -96,8 +96,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   indicatorWeight: 3,
                   tabs: const [
                     Tab(
-                      text: 'Add Product',
-                      icon: Icon(Icons.add_box_rounded, size: 24),
+                      text: 'Overview',
+                      icon: Icon(Icons.dashboard_rounded, size: 24),
                     ),
                     Tab(
                       text: 'Users',
@@ -135,7 +135,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildAddProductTab(),
+                _buildOverviewTab(),
                 _buildUsersTab(),
                 _buildProductsTab(),
               ],
@@ -280,7 +280,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     );
   }
 
-  Widget _buildAddProductTab() {
+  Widget _buildOverviewTab() {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
