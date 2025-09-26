@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.smartshop"
+    namespace = "com.smartshop.smartshop"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.smartshop"
+        applicationId = "com.smartshop.smartshop"
         minSdkVersion flutter.minSdkVersion
         targetSdk = 34
         versionCode = 1

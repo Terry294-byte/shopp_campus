@@ -259,4 +259,20 @@ class AuthService {
       throw e;
     }
   }
+
+  // Submit feedback to Firestore with user info
+  Future<void> submitFeedback(String uid, String name, String email, String feedback) async {
+    try {
+      await _firestore.collection('feedback').add({
+        'uid': uid,
+        'name': name,
+        'email': email,
+        'feedback': feedback,
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error submitting feedback: $e');
+      throw e;
+    }
+  }
 }
